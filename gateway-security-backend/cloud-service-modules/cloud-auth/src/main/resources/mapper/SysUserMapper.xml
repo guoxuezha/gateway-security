@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qianmeng.computerroom.mapper.SysUserMapper">
+    <resultMap id="BaseResultMap" type="com.qianmeng.computerroom.po.SysUser">
+        <id column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <result column="password" property="password" jdbcType="VARCHAR"/>
+        <result column="company_id" property="companyId" jdbcType="INTEGER"/>
+        <result column="department_id" property="departmentId" jdbcType="INTEGER"/>
+        <result column="job_number" property="jobNumber" jdbcType="VARCHAR"/>
+        <result column="real_name" property="realName" jdbcType="VARCHAR"/>
+        <result column="user_tel" property="userTel" jdbcType="VARCHAR"/>
+        <result column="user_description" property="userDescription" jdbcType="VARCHAR"/>
+        <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR"/>
+        <result column="create_person" property="createPerson" jdbcType="INTEGER"/>
+        <result column="modified_time" property="modifiedTime" jdbcType="VARCHAR"/>
+        <result column="modified_person" property="modifiedPerson" jdbcType="INTEGER"/>
+        <result column="deleted_time" property="deletedTime" jdbcType="VARCHAR"/>
+        <result column="deleted_person" property="deletedPerson" jdbcType="INTEGER"/>
+        <result column="user_remark" property="userRemark" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--根据roleId与userName进行分页查询-->
+    <select id="selectUserAndRolesByPage" resultMap="BaseResultMap">
+        select u.user_id, user_name, u.company_id, department_id, job_number, user_description, u.is_deleted
+        from sys_user u
+        left join sys_user_role ur on u.user_id = ur.user_id
+        left join company c on u.company_id = c.company_id
+        <where>
+            u.is_deleted != 1
+            <if test="roleId != 0 and roleId != null">
+                and ur.role_id = #{roleId,jdbcType=INTEGER}
+            </if>
+            <if test="userName != '%%'">
+                and u.user_name like #{userName,jdbcType=VARCHAR}
+            </if>
+            <if test="companyId != null and companyId != 0">
+                and u.company_id = #{companyId,jdbcType=INTEGER}
+            </if>
+            group by u.user_id
+        </where>
+
+    </select>
+
+</mapper>

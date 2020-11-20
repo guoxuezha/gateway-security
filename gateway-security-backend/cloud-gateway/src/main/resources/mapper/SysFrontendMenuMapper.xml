@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qianmeng.computerroom.mapper.SysFrontendMenuMapper">
+    <resultMap id="BaseResultMap" type="com.qianmeng.computerroom.po.SysFrontendMenu">
+        <id column="menu_id" property="menuId" jdbcType="INTEGER"/>
+        <result column="menu_pid" property="menuPid" jdbcType="VARCHAR"/>
+        <result column="menu_name" property="menuName" jdbcType="VARCHAR"/>
+        <result column="menu_code_name" property="menuCodeName" jdbcType="VARCHAR"/>
+        <result column="menu_url" property="menuUrl" jdbcType="VARCHAR"/>
+        <result column="menu_sort" property="menuSort" jdbcType="INTEGER"/>
+        <result column="menu_description" property="menuDescription" jdbcType="VARCHAR"/>
+        <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR"/>
+        <result column="create_person" property="createPerson" jdbcType="INTEGER"/>
+        <result column="modified_time" property="modifiedTime" jdbcType="VARCHAR"/>
+        <result column="modified_person" property="modifiedPerson" jdbcType="INTEGER"/>
+        <result column="deleted_time" property="deletedTime" jdbcType="VARCHAR"/>
+        <result column="deleted_person" property="deletedPerson" jdbcType="INTEGER"/>
+        <result column="menu_remark" property="menuRemark" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- 根据登录账号,获得前端展现的菜单,控制前端菜单的权限 -->
+    <select id="getMenusByUserName" resultMap="BaseResultMap">
+        select distinct a.menu_id,
+                        a.menu_name,
+                        a.menu_code_name,
+                        a.menu_pid,
+                        a.menu_sort
+        from sys_frontend_menu a,
+             sys_role b,
+             sys_role_frontend_menu c,
+             sys_user d,
+             sys_user_role e
+        where (a.menu_id = c.menu_id or c.menu_id = '*')
+          and b.role_id = c.role_id
+          and d.user_id = e.user_id
+          and e.role_id = c.role_id
+          and d.user_name = #{username}
+          and a.menu_pid != 0
+        order by a.menu_sort
+    </select>
+
+</mapper>

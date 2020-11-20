@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qianmeng.computerroom.mapper.SysBackendApiMapper">
+    <resultMap id="BaseResultMap" type="com.qianmeng.computerroom.po.SysBackendApi">
+        <id column="api_id" property="apiId" jdbcType="INTEGER"/>
+        <result column="api_pid" property="apiPid" jdbcType="INTEGER"/>
+        <result column="api_name" property="apiName" jdbcType="VARCHAR"/>
+        <result column="api_url" property="apiUrl" jdbcType="VARCHAR"/>
+        <result column="api_method" property="apiMethod" jdbcType="VARCHAR"/>
+        <result column="api_sort" property="apiSort" jdbcType="INTEGER"/>
+        <result column="api_description" property="apiDescription" jdbcType="VARCHAR"/>
+        <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR"/>
+        <result column="create_person" property="createPerson" jdbcType="INTEGER"/>
+        <result column="modified_time" property="modifiedTime" jdbcType="VARCHAR"/>
+        <result column="modified_person" property="modifiedPerson" jdbcType="INTEGER"/>
+        <result column="deleted_time" property="deletedTime" jdbcType="VARCHAR"/>
+        <result column="deleted_person" property="deletedPerson" jdbcType="INTEGER"/>
+        <result column="api_remark" property="apiRemark" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--根据用户名称获得API URL资源鉴权-->
+    <select id="getApiUrlByUserName" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select DISTINCT a.api_url, a.api_method
+        from sys_backend_api a
+                 left join sys_role_backend_api ra on a.api_id = ra.api_id
+                 left join sys_role r on ra.role_id = r.role_id
+                 left join sys_user_role ur on r.role_id = ur.role_id
+                 left join sys_user u on ur.user_id = u.user_id
+        where u.user_name = #{username,jdbcType=VARCHAR}
+          and a.api_url is not NULL
+    </select>
+
+    <!--管理员对API进行管理,全查API-->
+    <select id="getAllApiList" resultMap="BaseResultMap">
+        SELECT b.api_id,
+               a.api_name parentName,
+               b.api_pid,
+               b.api_name,
+               b.api_sort,
+               b.api_url,
+               b.api_method,
+               b.api_description
+        FROM sys_backend_api a
+                 RIGHT JOIN
+             sys_backend_api b ON b.api_pid = a.api_id
+        ORDER BY b.api_sort
+    </select>
+
+
+</mapper>

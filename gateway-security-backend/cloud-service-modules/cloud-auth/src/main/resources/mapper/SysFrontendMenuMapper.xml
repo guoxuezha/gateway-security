@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qianmeng.computerroom.mapper.SysFrontendMenuMapper">
+    <resultMap id="BaseResultMap" type="com.qianmeng.computerroom.po.SysFrontendMenu">
+        <id column="menu_id" property="menuId" jdbcType="INTEGER"/>
+        <result column="menu_pid" property="menuPid" jdbcType="VARCHAR"/>
+        <result column="menu_name" property="menuName" jdbcType="VARCHAR"/>
+        <result column="menu_code_name" property="menuCodeName" jdbcType="VARCHAR"/>
+        <result column="menu_url" property="menuUrl" jdbcType="VARCHAR"/>
+        <result column="menu_sort" property="menuSort" jdbcType="INTEGER"/>
+        <result column="menu_description" property="menuDescription" jdbcType="VARCHAR"/>
+        <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR"/>
+        <result column="create_person" property="createPerson" jdbcType="INTEGER"/>
+        <result column="modified_time" property="modifiedTime" jdbcType="VARCHAR"/>
+        <result column="modified_person" property="modifiedPerson" jdbcType="INTEGER"/>
+        <result column="deleted_time" property="deletedTime" jdbcType="VARCHAR"/>
+        <result column="deleted_person" property="deletedPerson" jdbcType="INTEGER"/>
+        <result column="menu_remark" property="menuRemark" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="selectAllMenu" resultMap="BaseResultMap">
+        select menu_id, menu_name, menu_code_name, menu_pid, menu_sort
+        from sys_frontend_menu
+        where is_deleted = 0
+        order by menu_sort
+    </select>
+
+    <!--查询分页total-->
+    <select id="selectCountByMenuName" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(1)
+        FROM sys_frontend_menu a
+                 right join sys_frontend_menu b on b.menu_pid = a.menu_id
+        where b.is_deleted = 0
+          and b.menu_name like #{menuName,jdbcType=VARCHAR}
+          and b.is_deleted = 0
+        order by b.menu_sort
+    </select>
+
+    <!-- 查所有的前端菜单（编辑使用） -->
+    <select id="selectMenuListByPage" resultType="com.qianmeng.computerroom.vo.SysFrontendVo">
+        SELECT b.menu_id,
+               a.menu_name parentName,
+               b.menu_code_name,
+               b.menu_pid,
+               b.menu_name,
+               b.menu_sort,
+               b.menu_url,
+               b.menu_description
+        FROM sys_frontend_menu a
+                 right join sys_frontend_menu b on b.menu_pid = a.menu_id
+        where b.is_deleted = 0
+          and b.menu_name like #{menuName,jdbcType=VARCHAR}
+        order by b.menu_sort
+    </select>
+
+    <!--根据roleId查询该角色可访问的菜单项-->
+    <select id="selectByRoleId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select m.menu_id, menu_name, menu_code_name
+        from sys_frontend_menu m
+                 left join sys_role_frontend_menu rm on m.menu_id = rm.menu_id
+        where m.is_deleted = 0
+          and role_id = #{roleId,jdbcType=INTEGER}
+    </select>
+
+    <!-- 根据登录账号,获得前端展现的菜单,控制前端菜单的权限 -->
+    <select id="getMenusByUserName" resultMap="BaseResultMap">
+        select distinct a.menu_id,
+                        a.menu_name,
+                        a.menu_code_name,
+                        a.menu_pid,
+                        a.menu_sort
+        from sys_frontend_menu a,
+             sys_role b,
+             sys_role_frontend_menu c,
+             sys_user d,
+             sys_user_role e
+        where (a.menu_id = c.menu_id or c.menu_id = '*')
+          and b.role_id = c.role_id
+          and d.user_id = e.user_id
+          and e.role_id = c.role_id
+          and d.user_name = #{username}
+          and a.menu_pid != 0
+        order by a.menu_sort
+    </select>
+
+</mapper>

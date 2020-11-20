@@ -1,0 +1,83 @@
+server:
+  port: 9527
+
+spring:
+  # 使用securityReactive覆盖web中的对象
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: cloud-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+    gateway:
+      # 开启动态路由,通过微服务的实例名进行路由
+      discovery:
+        locator:
+          enabled: true
+      # 路由
+      routes:
+        # 权限模块
+        - id: auth_route
+          uri: lb://login-auth
+          predicates:
+            - Path=/auth/**
+
+  datasource:
+    # 数据源操作类型
+    type: com.alibaba.druid.pool.DruidDataSource
+    # 数据库驱动包
+    driver-class-name: org.gjt.mm.mysql.Driver
+    url: jdbc:mysql://localhost:3306/computer_room?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: MySqlPassword!!
+
+  # 将缓存策略设置为Redis
+  cache:
+    cache-names: r1,r2
+    redis:
+      # 设置缓存中Key的有效期为30分钟
+      time-to-live: 1800s
+
+  redis:
+    # 使用Redis库中的第一个Database
+    database: 0
+    host: 127.0.0.1
+    port: 6379
+    password: RedisPassword!
+    # Redis客户端使用lettuce
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        # 最大阻塞等待时间(-1表示无限制)
+        max-wait: -1ms
+        min-idle: 0
+
+mybatis-plus:
+  # 如果是放在resource目录 classpath:/mapper/*Mapper.xml
+  mapper-locations: classpath:mapper/**/*Mapper.xml
+  #实体扫描，多个package用逗号或者分号分隔
+  typeAliasesPackage: com.qianmeng.computerroom.po
+  global-config:
+    db-config:
+      #主键类型  0:"数据库ID自增", 1:"用户输入ID",2:"全局唯一ID (数字类型唯一ID)", 3:"全局唯一ID UUID";
+      id-type: AUTO
+      #驼峰下划线转换
+      table-underline: true
+      #数据库大写下划线转换
+      capital-mode: true
+      #逻辑删除配置
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+  configuration:
+    #配置返回数据库(column下划线命名&&返回java实体是驼峰命名)，自动匹配无需as（没开启这个，SQL需要写as： select user_id as userId）
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    database-id: mysql
+
+
+
+

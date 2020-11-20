@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qianmeng.computerroom.mapper.SysBackendApiMapper">
+    <resultMap id="BaseResultMap" type="com.qianmeng.computerroom.po.SysBackendApi">
+        <id column="api_id" property="apiId" jdbcType="INTEGER"/>
+        <result column="api_pid" property="apiPid" jdbcType="INTEGER"/>
+        <result column="api_name" property="apiName" jdbcType="VARCHAR"/>
+        <result column="api_url" property="apiUrl" jdbcType="VARCHAR"/>
+        <result column="api_method" property="apiMethod" jdbcType="VARCHAR"/>
+        <result column="api_sort" property="apiSort" jdbcType="INTEGER"/>
+        <result column="api_description" property="apiDescription" jdbcType="VARCHAR"/>
+        <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR"/>
+        <result column="create_person" property="createPerson" jdbcType="INTEGER"/>
+        <result column="modified_time" property="modifiedTime" jdbcType="VARCHAR"/>
+        <result column="modified_person" property="modifiedPerson" jdbcType="INTEGER"/>
+        <result column="deleted_time" property="deletedTime" jdbcType="VARCHAR"/>
+        <result column="deleted_person" property="deletedPerson" jdbcType="INTEGER"/>
+        <result column="api_remark" property="apiRemark" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+</mapper>

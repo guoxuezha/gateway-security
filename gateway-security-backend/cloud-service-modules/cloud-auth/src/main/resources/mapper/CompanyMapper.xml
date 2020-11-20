@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qianmeng.computerroom.mapper.CompanyMapper">
+    <resultMap id="BaseResultMap" type="com.qianmeng.computerroom.po.Company">
+        <id column="company_id" property="companyId" jdbcType="INTEGER"/>
+        <result column="company_name" property="companyName" jdbcType="VARCHAR"/>
+        <result column="contacts" property="contacts" jdbcType="VARCHAR"/>
+        <result column="tel" property="tel" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="community_name" property="communityName" jdbcType="VARCHAR"/>
+        <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR"/>
+        <result column="create_person" property="createPerson" jdbcType="INTEGER"/>
+        <result column="modified_time" property="modifiedTime" jdbcType="VARCHAR"/>
+        <result column="modified_person" property="modifiedPerson" jdbcType="INTEGER"/>
+        <result column="deleted_time" property="deletedTime" jdbcType="VARCHAR"/>
+        <result column="deleted_person" property="deletedPerson" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--适配超管和普通用户,查询公司列表-->
+    <select id="selectNotDeleted" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select company_id, company_name
+        from company
+        <where>
+            is_deleted = 0
+            <if test="companyId != null and companyId != 0">
+                and company_id = #{companyId}
+            </if>
+        </where>
+    </select>
+
+    <!--根据用户名查询公司信息-->
+    <select id="selectByUserName" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select c.company_id, company_name, contacts, tel, email
+        from company c
+                 LEFT JOIN sys_user u on c.company_id = u.company_id
+        where user_name = #{userName,jdbcType=VARCHAR}
+          and c.is_deleted = 0
+    </select>
+
+
+</mapper>

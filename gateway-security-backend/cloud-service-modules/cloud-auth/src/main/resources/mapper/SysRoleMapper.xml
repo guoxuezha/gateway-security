@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qianmeng.computerroom.mapper.SysRoleMapper">
+    <resultMap id="BaseResultMap" type="com.qianmeng.computerroom.po.SysRole">
+        <id column="role_id" property="roleId" jdbcType="INTEGER"/>
+        <result column="role_name" property="roleName" jdbcType="VARCHAR"/>
+        <result column="role_description" property="roleDescription" jdbcType="VARCHAR"/>
+        <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR"/>
+        <result column="create_person" property="createPerson" jdbcType="INTEGER"/>
+        <result column="modified_time" property="modifiedTime" jdbcType="VARCHAR"/>
+        <result column="modified_person" property="modifiedPerson" jdbcType="INTEGER"/>
+        <result column="deleted_time" property="deletedTime" jdbcType="VARCHAR"/>
+        <result column="deleted_person" property="deletedPerson" jdbcType="INTEGER"/>
+        <result column="role_remark" property="roleRemark" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--根据用户名查询拥有的角色ID-->
+    <select id="getRolesByUserName" resultType="java.lang.String">
+        SELECT b.role_name
+        from sys_user a,
+             sys_role b,
+             sys_user_role c
+        where a.user_id = c.user_id
+          and b.role_id = c.role_id
+          and a.is_deleted = 0
+          and a.user_name = #{userName}
+    </select>
+
+    <!--根据userId查询roleId集合-->
+    <select id="selectByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select r.role_id, role_name
+        from sys_user_role ur
+                 left join sys_role r on ur.role_id = r.role_id
+        where user_id = #{userId,jdbcType=INTEGER}
+    </select>
+
+    <!--根据roleId找用户以及用户是否被设置在某个角色上,用在显示在用于角色设置处-->
+    <select id="getRoleAndUserList" resultType="com.qianmeng.computerroom.vo.SysRoleAndPermissionVo">
+        SELECT t1.user_id   as id,
+               t1.user_name as name,
+               t2.role_id
+        from sys_user t1
+                 LEFT JOIN
+             (SELECT a.user_id,
+                     a.user_name,
+                     b.role_id,
+                     b.role_name
+              FROM sys_user a
+                       JOIN (sys_role b
+                  JOIN sys_user_role c ON c.role_id = b.role_id) ON c.user_id = a.user_id
+              WHERE b.role_id = #{roleId}) t2 ON t2.user_id = t1.user_id
+    </select>
+
+    <!--根据roleId找菜单-->
+    <select id="getRoleAndMenuList" resultType="com.qianmeng.computerroom.vo.SysRoleAndPermissionVo">
+        select t1.menu_id   as id,
+               t1.menu_name as name,
+               t1.menu_pid  as pid,
+               t2.role_id   as role_id
+        from sys_frontend_menu t1
+                 left join
+             (
+                 select a.menu_id,
+                        a.menu_name,
+                        a.menu_pid,
+                        a.menu_sort,
+                        b.role_id
+                 from sys_frontend_menu a,
+                      sys_role b,
+                      sys_role_frontend_menu c
+                 where (a.menu_id = c.menu_id or c.menu_id = '*')
+                   and b.role_id = c.role_id
+                   and b.role_id = #{roleId}) t2 on t2.menu_id = t1.menu_id
+        order by t1.menu_sort
+
+    </select>
+
+    <!--根据roleId找API-->
+    <select id="getRoleAndApiList" resultType="com.qianmeng.computerroom.vo.SysRoleAndPermissionVo">
+        select t1.api_id  as id,
+               CASE t1.api_url
+                   WHEN 'none' THEN t1.api_name
+                   ELSE CONCAT(t1.api_name, ' (', t1.api_url, ' ,提交类型:', t1.api_method, ')')
+                   END    as name,
+               t1.api_pid as pid,
+               t2.role_id as role_id
+        from sys_backend_api t1
+                 left join
+             (
+                 select a.api_id,
+                        a.api_name,
+                        a.api_pid,
+                        a.api_sort,
+                        b.role_id
+                 from sys_backend_api a,
+                      sys_role b,
+                      sys_role_backend_api c
+                 where a.api_id = c.api_id
+                   and b.role_id = c.role_id
+                   and b.role_id = #{roleId}
+             ) t2 on t2.api_id = t1.api_id
+        order by t1.api_sort
+    </select>
+
+
+</mapper>
