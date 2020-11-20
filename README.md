@@ -28,7 +28,9 @@ npm install
 npm run dev
 ```
 
-
+## 可能需要你自行配置的地方
+#### 1.gateway 和 auth 模块中yml文件的datasource
+#### 2.后端使用了Redis作为用户信息和Token的缓存，也需要您自行下载安装和修改yml中的配置
 
 ## 相关博客连接
 #### [根据登陆用户动态展示Vue菜单](https://juejin.cn/post/6896732256396640264)
