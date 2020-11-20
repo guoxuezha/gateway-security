@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+    <!--<properties resource="application.yml"></properties>-->
+
+    <!--手动指定mysql-connector-java的jar包,如果本地mysql版本低于8.0,则下面的Driver不加cj,否则要加cj-->
+    <!--F:\\Maven\\mysql-->
+    <!--D:\eniverment\mysql-8.0-->
+    <classPathEntry location="D:\eniverment\mysql-8.0\\mysql-connector-java\\8.0.20\\mysql-connector-java-8.0.20.jar"/>
+
+    <!--注意这里的targetRuntime="MyBatis3Simple"，指定了不生成Example相关内容-->
+    <context id="MysqlTables" targetRuntime="MyBatis3Simple">
+
+        <commentGenerator>
+            <property name="suppressDate" value="true"/>
+            <!-- 是否去除自动生成的注释 true：是 ： false:否 -->
+            <property name="suppressAllComments" value="true"/>
+        </commentGenerator>
+
+        <!-- 生成一对一配置 -->
+        <!--<plugin type="cc.bandaotixi.plugins.OneToOnePlugin" />-->
+        <!-- 生成一对多配置 -->
+        <!--<plugin type="cc.bandaotixi.plugins.OneToManyPlugin" />-->
+        <!-- 生成批量配置 -->
+        <!--<plugin type="cc.bandaotixi.plugins.BatchInsertPlugin" />
+        <plugin type="cc.bandaotixi.plugins.BatchUpdatePlugin" />-->
+
+        <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
+                        connectionURL="jdbc:mysql://localhost:3306/computer_room?useUnicode=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=UTC"
+                        userId="root" password="root">
+            <property name="nullCatalogMeansCurrent" value="true"/>
+        </jdbcConnection>
+
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+
+        <!-- 生成PO类的位置 -->
+        <javaModelGenerator targetPackage="com.qianmeng.computerroom.po"
+                            targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+        <!-- mapper映射文件生成的位置 -->
+        <sqlMapGenerator targetPackage="mapper"
+                         targetProject="src/main/resources">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+
+        <!-- mapper接口生成的位置 -->
+        <javaClientGenerator type="XMLMAPPER"
+                             targetPackage="com.qianmeng.computerroom.mapper"
+                             targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+
+        <!--示范-->
+        <table tableName="snmp_oid_all" domainObjectName="SnmpOidAll">
+            <property name="useActualColumnNames" value="true"/>
+            <generatedKey column="oid_id" sqlStatement="MySql" identity="true"/>
+        </table>
+
+        <table tableName="snmp_equipment" domainObjectName="SnmpEquipment">
+            <property name="useActualColumnNames" value="true"/>
+            <generatedKey column="equipment_id" sqlStatement="MySql" identity="true"/>
+        </table>
+
+        <table tableName="snmp_model" domainObjectName="SnmpModel">
+            <property name="useActualColumnNames" value="true"/>
+            <generatedKey column="model_id" sqlStatement="MySql" identity="true"/>
+        </table>
+
+        <table tableName="r_oid_model" domainObjectName="ROidModel">
+            <property name="useActualColumnNames" value="true"/>
+            <generatedKey column="r_oid_model_id" sqlStatement="MySql" identity="true"/>
+        </table>
+
+        <!--<table tableName="ipmi_sensor_threshold" domainObjectName="IpmiSensorThreshold">
+            <property name="useActualColumnNames" value="true"/>
+            <generatedKey column="ipmi_sensor_threshold_id" sqlStatement="MySql" identity="true"/>
+        </table>-->
+
+    </context>
+
+</generatorConfiguration>
+
+
+

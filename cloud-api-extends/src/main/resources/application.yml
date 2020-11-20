@@ -1,0 +1,30 @@
+spring:
+  mail:
+    host: smtp.qq.com
+    username: 3379916786@qq.com
+    # QQ邮箱POP3/SMTP客户端服务授权码
+    password: zwlxvhaapybabbaa
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            requeired: true
+
+developer:
+  list:
+    - name: 郭超
+      email: guoxuezha@outlook.com
+
+
+## 配置logback日志打印的参数
+#logging:
+#  config: classpath:logback-spring.xml
+#  level:
+#    dao: debug
+#    org:
+#      mybatis: debug
+
+
